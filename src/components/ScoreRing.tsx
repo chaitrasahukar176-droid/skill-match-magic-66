@@ -30,7 +30,8 @@ export const toneChip: Record<ScoreTone, string> = {
 };
 
 interface ScoreRingProps {
-  score: number;
+  /** null renders an empty "not scored yet" ring. */
+  score: number | null;
   size?: number;
   strokeWidth?: number;
   label?: string;
@@ -38,7 +39,8 @@ interface ScoreRingProps {
 }
 
 export function ScoreRing({ score, size = 84, strokeWidth = 8, label, className }: ScoreRingProps) {
-  const tone = scoreTone(score);
+  const value = score ?? 0;
+  const tone = scoreTone(value);
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const progress = useMotionValue(0);
