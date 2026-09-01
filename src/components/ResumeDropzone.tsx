@@ -53,7 +53,7 @@ export function ResumeDropzone({ jobId, onDone }: { jobId: string; onDone: () =>
         const path = `${userId}/${jobId}/${crypto.randomUUID()}-${file.name.replace(/[^\w.\-]+/g, "_")}`;
         const { error: uploadError } = await supabase.storage
           .from("resumes")
-          .upload(path, file, { contentType: file.type || undefined, upsert: false });
+          .upload(path, file, { upsert: false });
         if (uploadError) throw new Error(uploadError.message);
 
         const { id } = await createCandidate({ data: { jobId, filePath: path, fileName: file.name } });
