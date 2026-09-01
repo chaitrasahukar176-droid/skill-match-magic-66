@@ -81,7 +81,7 @@ export function ScoreRing({ score, size = 84, strokeWidth = 8, label, className 
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className={cn("font-semibold tabular-nums", toneText[tone])} style={{ fontSize: size / 3.6 }}>
-          {display}
+          {score === null ? "–" : display}
         </span>
         {label ? <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</span> : null}
       </div>
