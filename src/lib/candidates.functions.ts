@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { ParsedJd } from "./matching.server";
 
 export const createCandidate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -121,7 +122,7 @@ export const processCandidate = createServerFn({ method: "POST" })
         })
         .eq("id", candidate.id);
 
-      const jd: matching.ParsedJd = {
+      const jd: ParsedJd = {
         required_skills: job.required_skills ?? [],
         preferred_skills: job.preferred_skills ?? [],
         min_experience_years: job.min_experience_years === null ? null : Number(job.min_experience_years),
