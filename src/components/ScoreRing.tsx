@@ -48,13 +48,13 @@ export function ScoreRing({ score, size = 84, strokeWidth = 8, label, className 
   const [display, setDisplay] = useState(0);
 
   useEffect(() => {
-    const controls = animate(progress, score, { duration: 0.9, ease: "easeOut" });
-    const unsubscribe = progress.on("change", (value) => setDisplay(Math.round(value)));
+    const controls = animate(progress, value, { duration: 0.9, ease: "easeOut" });
+    const unsubscribe = progress.on("change", (v) => setDisplay(Math.round(v)));
     return () => {
       controls.stop();
       unsubscribe();
     };
-  }, [score, progress]);
+  }, [value, progress]);
 
   return (
     <div className={cn("relative inline-flex items-center justify-center", className)} style={{ width: size, height: size }}>
