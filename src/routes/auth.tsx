@@ -138,6 +138,21 @@ function AuthPage() {
           </Button>
         </form>
 
+        <div className="my-5 flex items-center gap-3">
+          <span className="h-px flex-1 bg-border" />
+          <span className="text-[11px] uppercase tracking-wider text-muted-foreground">or</span>
+          <span className="h-px flex-1 bg-border" />
+        </div>
+
+        <Button type="button" variant="secondary" className="w-full" onClick={startDemo} disabled={demoLoading}>
+          {demoLoading ? <Loader2 className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
+          Explore the demo workspace
+        </Button>
+        <p className="mt-2 text-center text-[11px] text-muted-foreground">
+          One click — no signup. Loads sample job descriptions and ranked candidates.
+        </p>
+
+
         <button
           type="button"
           onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
