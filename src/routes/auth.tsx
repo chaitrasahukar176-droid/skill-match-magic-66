@@ -32,6 +32,27 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
+  const prepareDemo = useServerFn(ensureDemoAccount);
+
+  const startDemo = async () => {
+    setDemoLoading(true);
+    try {
+      const creds = await prepareDemo();
+      const { error } = await supabase.auth.signInWithPassword({
+        email: creds.email,
+        password: creds.password,
+      });
+      if (error) throw error;
+      toast.success("Signed in to the demo workspace");
+      navigate({ to: "/dashboard" });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not start the demo");
+    } finally {
+      setDemoLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     void supabase.auth.getSession().then(({ data }) => {
