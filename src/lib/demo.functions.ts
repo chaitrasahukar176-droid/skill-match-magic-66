@@ -1,7 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 
-export const DEMO_EMAIL = "demo@skillmatch.ai";
-export const DEMO_PASSWORD = "skillmatch-demo";
+// Overridable from the deployment environment (e.g. Vercel env vars).
+export const DEMO_EMAIL =
+  import.meta.env['VITE_DEMO_EMAIL'] || "demo@skillmatch.ai";
+export const DEMO_PASSWORD =
+  import.meta.env['VITE_DEMO_PASSWORD'] || "skillmatch-demo";
 
 /**
  * Makes sure a ready-to-use demo recruiter account exists and has data.

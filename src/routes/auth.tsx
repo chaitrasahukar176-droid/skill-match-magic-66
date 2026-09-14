@@ -162,6 +162,10 @@ function AuthPage() {
         <p className="mt-2 text-center text-[11px] text-muted-foreground">
           One click — no signup. Loads sample job descriptions and ranked candidates.
         </p>
+        <p className="mt-1 text-center text-[11px] text-muted-foreground">
+          Or sign in manually: <span className="font-medium text-foreground">{DEMO_EMAIL}</span> /{" "}
+          <span className="font-medium text-foreground">{DEMO_PASSWORD}</span>
+        </p>
 
 
         <button
