@@ -68,6 +68,8 @@ Use concise canonical skill names (e.g. "React", "PostgreSQL", "Leadership"). Ma
 }
 
 export async function parseResume(rawText: string): Promise<ParsedResume> {
+  if (aiUnavailable()) return parseResumeHeuristic(rawText);
+
   const parsed = await callAiJson<Record<string, unknown>>(
     `You are a resume parser. Extract structured candidate data from resume text.
 Schema: { "full_name": string|null, "email": string|null, "phone": string|null, "skills": string[], "education": [{"degree": string, "institution": string, "year": string}], "experience": [{"role": string, "company": string, "duration": string, "description": string}], "total_experience_years": number|null }
