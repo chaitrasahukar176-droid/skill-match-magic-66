@@ -46,6 +46,8 @@ const asNumber = (value: unknown): number | null => {
 };
 
 export async function parseJobDescription(rawText: string): Promise<ParsedJd> {
+  if (aiUnavailable()) return parseJdHeuristic(rawText);
+
   const parsed = await callAiJson<Record<string, unknown>>(
     `You are an expert technical recruiter. Extract structured requirements from a job description.
 Schema: { "title": string|null, "company": string|null, "role_summary": string (2 sentences), "required_skills": string[], "preferred_skills": string[], "min_experience_years": number|null, "education_requirement": string|null }
