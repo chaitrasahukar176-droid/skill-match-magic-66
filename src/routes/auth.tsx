@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { ensureDemoAccount } from "@/lib/demo.functions";
+import { DEMO_EMAIL, DEMO_PASSWORD, ensureDemoAccount } from "@/lib/demo.functions";
 
 
 export const Route = createFileRoute("/auth")({
@@ -38,12 +38,23 @@ function AuthPage() {
   const startDemo = async () => {
     setDemoLoading(true);
     try {
-      const creds = await prepareDemo();
+      // Fast path: the demo account already exists, so sign straight in.
+      // Works on any host (Vercel included) with only the publishable key.
       const { error } = await supabase.auth.signInWithPassword({
-        email: creds.email,
-        password: creds.password,
+        email: DEMO_EMAIL,
+        password: DEMO_PASSWORD,
       });
-      if (error) throw error;
+
+      if (error) {
+        // Fallback: provision/repair the demo account server-side, then retry.
+        const creds = await prepareDemo();
+        const retry = await supabase.auth.signInWithPassword({
+          email: creds.email,
+          password: creds.password,
+        });
+        if (retry.error) throw retry.error;
+      }
+
       toast.success("Signed in to the demo workspace");
       navigate({ to: "/dashboard" });
     } catch (error) {
@@ -150,6 +161,10 @@ function AuthPage() {
         </Button>
         <p className="mt-2 text-center text-[11px] text-muted-foreground">
           One click — no signup. Loads sample job descriptions and ranked candidates.
+        </p>
+        <p className="mt-1 text-center text-[11px] text-muted-foreground">
+          Or sign in manually: <span className="font-medium text-foreground">{DEMO_EMAIL}</span> /{" "}
+          <span className="font-medium text-foreground">{DEMO_PASSWORD}</span>
         </p>
 
 
