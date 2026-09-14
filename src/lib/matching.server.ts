@@ -1,4 +1,8 @@
 import { callAiJson } from "./ai.server";
+import { parseJdHeuristic, parseResumeHeuristic, semanticMatchHeuristic } from "./heuristics.server";
+
+/** True when the AI gateway key is missing — we then fall back to deterministic parsing. */
+const aiUnavailable = () => !process.env["LOVABLE_API_KEY"];
 
 /** Weighting of the deterministic keyword score vs. the LLM semantic score. */
 export const KEYWORD_WEIGHT = 0.4;
@@ -42,6 +46,8 @@ const asNumber = (value: unknown): number | null => {
 };
 
 export async function parseJobDescription(rawText: string): Promise<ParsedJd> {
+  if (aiUnavailable()) return parseJdHeuristic(rawText);
+
   const parsed = await callAiJson<Record<string, unknown>>(
     `You are an expert technical recruiter. Extract structured requirements from a job description.
 Schema: { "title": string|null, "company": string|null, "role_summary": string (2 sentences), "required_skills": string[], "preferred_skills": string[], "min_experience_years": number|null, "education_requirement": string|null }
@@ -62,6 +68,8 @@ Use concise canonical skill names (e.g. "React", "PostgreSQL", "Leadership"). Ma
 }
 
 export async function parseResume(rawText: string): Promise<ParsedResume> {
+  if (aiUnavailable()) return parseResumeHeuristic(rawText);
+
   const parsed = await callAiJson<Record<string, unknown>>(
     `You are a resume parser. Extract structured candidate data from resume text.
 Schema: { "full_name": string|null, "email": string|null, "phone": string|null, "skills": string[], "education": [{"degree": string, "institution": string, "year": string}], "experience": [{"role": string, "company": string, "duration": string, "description": string}], "total_experience_years": number|null }
@@ -123,6 +131,10 @@ export function keywordScore(
 }
 
 export async function semanticMatch(jd: ParsedJd, resume: ParsedResume, resumeText: string): Promise<SemanticMatch> {
+  if (aiUnavailable()) {
+    return semanticMatchHeuristic(jd, resume, keywordScore(jd.required_skills, resume.skills, resumeText));
+  }
+
   const parsed = await callAiJson<Record<string, unknown>>(
     `You are an impartial hiring analyst. Compare a candidate to a job's requirements.
 Judge only skills, experience and education. Ignore name, gender, age, nationality, photos and schools' prestige.
