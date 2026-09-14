@@ -1,4 +1,8 @@
 import { callAiJson } from "./ai.server";
+import { parseJdHeuristic, parseResumeHeuristic, semanticMatchHeuristic } from "./heuristics.server";
+
+/** True when the AI gateway key is missing — we then fall back to deterministic parsing. */
+const aiUnavailable = () => !process.env["LOVABLE_API_KEY"];
 
 /** Weighting of the deterministic keyword score vs. the LLM semantic score. */
 export const KEYWORD_WEIGHT = 0.4;
