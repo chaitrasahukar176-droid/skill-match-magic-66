@@ -131,6 +131,10 @@ export function keywordScore(
 }
 
 export async function semanticMatch(jd: ParsedJd, resume: ParsedResume, resumeText: string): Promise<SemanticMatch> {
+  if (aiUnavailable()) {
+    return semanticMatchHeuristic(jd, resume, keywordScore(jd.required_skills, resume.skills, resumeText));
+  }
+
   const parsed = await callAiJson<Record<string, unknown>>(
     `You are an impartial hiring analyst. Compare a candidate to a job's requirements.
 Judge only skills, experience and education. Ignore name, gender, age, nationality, photos and schools' prestige.
